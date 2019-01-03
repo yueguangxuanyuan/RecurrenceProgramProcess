@@ -29,7 +29,7 @@ public class SolutionHandler{
             String sql = "select * from solution_open_event where id = " +id;
             resultSet = statement.executeQuery(sql);
 
-            if(resultSet == null || resultSet.next()){
+            if(resultSet == null || !resultSet.next()){
                 throw new Exception(ExceptionInfo.SOLUTION_RECORD_NOT_FOUND);
             }
             String solutionName = resultSet.getString("solutionname");
@@ -37,13 +37,14 @@ public class SolutionHandler{
             String rootFolder = resultSet.getString("targetfolder");
 
             //解析文件位置
-            String markString = "Roaming\\CppMonitor\\";
-            String fileSuffix = rootFolder.substring(rootFolder.indexOf(markString) + markString.length());
+            String markString = "Roaming\\CppMonitor\\File\\start_files\\";
+            int markLocation = rootFolder.indexOf(markString);
+            String fileSuffix = rootFolder.substring( markLocation+ markString.length());
 
             /*
             将文件拷贝到指定位置
              */
-            String sourceDirPath = commonAttributes.getFileRootPath() + File.separator + fileSuffix;
+            String sourceDirPath = commonAttributes.getFileRootPath() + File.separator +"File\\start_files\\"+ fileSuffix;
             String targetDirPath = commonAttributes.getOutPutRootPath() + File.separator + fileSuffix;
 
             FileUtils.copyDirectory(new File(sourceDirPath),new File(targetDirPath));
@@ -51,11 +52,13 @@ public class SolutionHandler{
             /*
             维护上下文
              */
-            Solution solution = new Solution();
+            Solution solution = new Solution(targetDirPath);
             solution.setSolutionName(solutionName);
-            solution.setSolutionPath(fullPath);
+            solution.setSolutionPath(fullPath.substring(0,fullPath.lastIndexOf("\\")));
 
+            solution.loadSolution();
 
+            commonAttributes.setCurrentSolution(solution);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
