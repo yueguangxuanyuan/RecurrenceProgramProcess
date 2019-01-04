@@ -1,5 +1,6 @@
 package com.xcelenter.Bussiness;
 
+import com.xcelenter.Bussiness.HandleFunctionImp.FileHandler;
 import com.xcelenter.Bussiness.HandleFunctionImp.SolutionHandler;
 import com.xcelenter.Common.ActionEnumClass;
 import com.xcelenter.Common.CommonAttributes;
@@ -24,11 +25,12 @@ public class RecurrenceProgramProcess {
         loadHandler();
     }
 
-    public void reproduceProgramProcess(String sourceDir,String targetDir){
+    public void reproduceProgramProcess(String sourceDir,String targetDir,String tmpDir){
         CommonAttributes commonAttributes = CommonAttributes.getInstance();
         commonAttributes.setDbFilePath(sourceDir+ File.separator +"\\Dao\\log.db");
         commonAttributes.setFileRootPath(sourceDir);
         commonAttributes.setOutPutRootPath(targetDir);
+        commonAttributes.setTmpPath(tmpDir);
 
         Connection con = null;
         Statement statement = null;
@@ -72,5 +74,7 @@ public class RecurrenceProgramProcess {
 
     private void loadHandler(){
         handlerMap.put(ActionEnumClass.solutionOpen , SolutionHandler::solutionOpenHandler);
+
+        handlerMap.put(ActionEnumClass.fileAddFile, FileHandler::fileAddHandler);
     }
 }

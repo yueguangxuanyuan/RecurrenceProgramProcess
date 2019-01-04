@@ -9,6 +9,7 @@ public class CommonAttributes {
     private String fileRootPath;
 
     private String outPutRootPath;
+    private String tmpPath;
 
     private Solution currentSolution;
 
@@ -55,5 +56,13 @@ public class CommonAttributes {
 
     public void setCurrentSolution(Solution currentSolution) {
         this.currentSolution = currentSolution;
+    }
+
+    public String getTmpPath() {
+        return tmpPath;
+    }
+
+    public void setTmpPath(String tmpPath) {
+        this.tmpPath = tmpPath;
     }
 }

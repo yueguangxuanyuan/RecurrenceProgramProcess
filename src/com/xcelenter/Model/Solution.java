@@ -45,6 +45,10 @@ public class Solution {
         this.solutionPath = solutionPath;
     }
 
+    public Project getProject(String projectName){
+        return projectMap.get(projectName);
+    }
+
     public void addProject(Project project){
         projectMap.put(project.getProjectName(),project);
     }
