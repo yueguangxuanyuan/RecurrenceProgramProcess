@@ -24,4 +24,12 @@ public class ActionEnumClass {
     public static final String contentSave = "contentSave";
     public static final String contentUnknown = "contentUnknown";
 
+    public static final String documentOpen = "documentOpen";
+    public static final String documentActive = "documentActive";
+    public static final String documentDeactive = "documentDeactive";
+    public static final String documentClose = "documentClose";
+    public static final String documentSave = "documentSave";
+
+
+
 }

@@ -109,4 +109,12 @@ public class Solution {
             e.printStackTrace();
         }
     }
+
+    public void flushSolutionChange(){
+        for(Project project : projectMap.values()){
+            if(project != null){
+                project.flushProjectChange();
+            }
+        }
+    }
 }

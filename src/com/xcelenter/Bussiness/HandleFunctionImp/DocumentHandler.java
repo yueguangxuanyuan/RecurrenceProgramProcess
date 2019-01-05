@@ -12,8 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ContentHandler {
-    public static void contentChangeHandler(int id) {
+public class DocumentHandler {
+
+    public static void documentSaveHandler(int id) {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -25,19 +26,26 @@ public class ContentHandler {
             /*
             检索出solution记录
              */
-            String sql = "select * from content_info where id = " +id;
+            String sql = "select * from document where id = " +id;
             resultSet = statement.executeQuery(sql);
 
             if(resultSet == null || !resultSet.next()){
-                throw new Exception(ExceptionInfo.CONTENT_RECORD_NOT_FOUND);
+                throw new Exception(ExceptionInfo.DOCUMENT_RECORD_NOT_FOUND);
             }
             String fullPath = resultSet.getString("fullpath");
-            String textfrom = resultSet.getString("textfrom");
-            String textto = resultSet.getString("textto");
-            int absoluteoffset = resultSet.getInt("absoluteoffset");
             String proejctName = resultSet.getString("project");
 
-            handleFileEdit(fullPath,textfrom,textto,absoluteoffset,proejctName);
+            Solution currentSolution = commonAttributes.getCurrentSolution();
+            if(currentSolution != null){
+                Project targetProject = currentSolution.getProject(proejctName);
+
+                if(targetProject != null){
+                    CodeFile codeFile = targetProject.getCodeFile(fullPath);
+                    if(codeFile != null){
+                        codeFile.flushContent();
+                    }
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -45,23 +53,6 @@ public class ContentHandler {
             e.printStackTrace();
         } finally {
             DBUtil.elegantlyClose(connection,statement,resultSet);
-        }
-    }
-
-    private static void handleFileEdit(String fullPath,String textfrom,String textto,int absoluteoffset,String proejctName){
-        CommonAttributes commonAttributes = CommonAttributes.getInstance();
-        Solution currentSolution = commonAttributes.getCurrentSolution();
-        if(currentSolution != null){
-            Project project = currentSolution.getProject(proejctName);
-
-            if(project !=null){
-                CodeFile codeFile = project.getCodeFile(fullPath);
-                if(codeFile != null){
-                    //在数据库中 对应记录  被单引号包裹
-                    codeFile.handleContentChange(textfrom.substring(1,textfrom.length()-1),textto.substring(1,textto.length()-1),absoluteoffset);
-                }
-            }
-
         }
     }
 }

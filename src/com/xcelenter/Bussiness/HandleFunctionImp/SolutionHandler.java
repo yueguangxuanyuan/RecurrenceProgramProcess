@@ -66,6 +66,44 @@ public class SolutionHandler{
         } finally {
             DBUtil.elegantlyClose(connection,statement,resultSet);
         }
+    }
 
+    public static void solutionCloseHandler(int id) {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            CommonAttributes commonAttributes = CommonAttributes.getInstance();
+            connection = DBUtil.getDBConnection(commonAttributes.getDbFilePath());
+            statement = connection.createStatement();
+
+            /*
+            检索出solution记录
+             */
+            String sql = "select * from solution_open_event where id = " +id;
+            resultSet = statement.executeQuery(sql);
+
+            if(resultSet == null || !resultSet.next()){
+                throw new Exception(ExceptionInfo.SOLUTION_RECORD_NOT_FOUND);
+            }
+            String solutionName = resultSet.getString("solutionname");
+
+            Solution currentSolution = commonAttributes.getCurrentSolution();
+            if(currentSolution == null){
+                throw new Exception(ExceptionInfo.CURRENT_SOLUTION_NOT_EXIST);
+            }
+
+            if(! solutionName .equals(currentSolution.getSolutionName())){
+                throw new Exception(ExceptionInfo.SOLUTION_NOT_MATCH);
+            }
+
+            commonAttributes.setCurrentSolution(null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.elegantlyClose(connection,statement,resultSet);
+        }
     }
 }

@@ -6,7 +6,6 @@ import com.xcelenter.Util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -15,7 +14,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +23,7 @@ public class Project {
     private String projectName;
     private String projectPath;
     private String projectPhysicPath;
-    private Map<String,String> fileMap;
+    private Map<String,CodeFile> fileMap;
 
     public Project(String projectPhysicPath){
         this.projectPhysicPath = projectPhysicPath;
@@ -65,14 +63,17 @@ public class Project {
 
         try {
             FileUtils.copyFile(new File(filePhysicPath),new File(targetFilePath));
-            fileMap.put(fileRealPath,targetFilePath);
+            CodeFile codeFile = new CodeFile(targetFilePath);
+            codeFile.setFilePath(fileRealPath);
+            codeFile.setFileName(fileRealPath.substring(fileRealPath.lastIndexOf("\\")+1));
+            fileMap.put(fileRealPath,codeFile);
         } catch (IOException e) {
             fileMap.put(fileRealPath,null);
         }
 
     }
 
-    public String getFilePhysicPath(String fileRealPath){
+    public CodeFile getCodeFile(String fileRealPath){
         return fileMap.get(fileRealPath);
     }
 
@@ -89,6 +90,7 @@ public class Project {
             Element root = document.getDocumentElement();
             NodeList itemGroupList = root.getElementsByTagName("ItemGroup");
 
+            Map<String,String> fileRelativePathMap = new HashMap<>();
 
             Consumer<NodeList> parseFileFunction = (nodeList)->{
                 for(int i = 0 ; i < nodeList.getLength() ; i++){
@@ -110,7 +112,7 @@ public class Project {
                     }
                     filePhysicPath += File.separator + fileName;
 
-                    fileMap.put(fileRealPath,filePhysicPath);
+                    fileRelativePathMap.put(fileRealPath,filePhysicPath);
                 }
             };
             for(int i = 0 ; i < itemGroupList.getLength(); i++){
@@ -149,8 +151,8 @@ public class Project {
             }
 
             //将代码文件拷贝进来
-            for(String fileRealPath : fileMap.keySet()){
-                String sourceFilePath = tmpDirPath + File.separator + fileMap.get(fileRealPath);
+            for(String fileRealPath : fileRelativePathMap.keySet()){
+                String sourceFilePath = tmpDirPath + File.separator + fileRelativePathMap.get(fileRealPath);
                 addFile(fileRealPath,sourceFilePath);
             }
         } catch (ParserConfigurationException e) {
@@ -161,5 +163,13 @@ public class Project {
             e.printStackTrace();
         }
 
+    }
+
+    public void flushProjectChange(){
+        for(CodeFile codeFile : fileMap.values()){
+            if(codeFile != null){
+                codeFile.flushContent();
+            }
+        }
     }
 }

@@ -55,6 +55,9 @@ public class CommonAttributes {
     }
 
     public void setCurrentSolution(Solution currentSolution) {
+        if(this.currentSolution != null){
+            this.currentSolution.flushSolutionChange();
+        }
         this.currentSolution = currentSolution;
     }
 

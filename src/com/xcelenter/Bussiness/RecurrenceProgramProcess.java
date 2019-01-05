@@ -1,5 +1,7 @@
 package com.xcelenter.Bussiness;
 
+import com.xcelenter.Bussiness.HandleFunctionImp.ContentHandler;
+import com.xcelenter.Bussiness.HandleFunctionImp.DocumentHandler;
 import com.xcelenter.Bussiness.HandleFunctionImp.FileHandler;
 import com.xcelenter.Bussiness.HandleFunctionImp.SolutionHandler;
 import com.xcelenter.Common.ActionEnumClass;
@@ -74,7 +76,14 @@ public class RecurrenceProgramProcess {
 
     private void loadHandler(){
         handlerMap.put(ActionEnumClass.solutionOpen , SolutionHandler::solutionOpenHandler);
+        handlerMap.put(ActionEnumClass.solutionClose,SolutionHandler::solutionCloseHandler);
 
         handlerMap.put(ActionEnumClass.fileAddFile, FileHandler::fileAddHandler);
+
+        handlerMap.put(ActionEnumClass.contentInsert, ContentHandler::contentChangeHandler);
+        handlerMap.put(ActionEnumClass.contentDelete, ContentHandler::contentChangeHandler);
+        handlerMap.put(ActionEnumClass.contentReplace, ContentHandler::contentChangeHandler);
+
+        handlerMap.put(ActionEnumClass.documentSave, DocumentHandler::documentSaveHandler);
     }
 }
