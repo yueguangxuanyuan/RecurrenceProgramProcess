@@ -39,12 +39,7 @@ public class FileUtil {
         }
         return realPath;
     }
-
-
-    public static void emptyTmpDir(){
-        CommonAttributes commonAttributes = CommonAttributes.getInstance();
-
-        String dirPath = commonAttributes.getTmpPath();
+    public static void ensureThenEmptyDir(String dirPath){
         File targetDir = new File(dirPath);
         if(targetDir.exists()){
             try {
@@ -55,6 +50,13 @@ public class FileUtil {
         }else{
             targetDir.mkdirs();
         }
+    }
+
+    public static void emptyTmpDir(){
+        CommonAttributes commonAttributes = CommonAttributes.getInstance();
+
+        String dirPath = commonAttributes.getTmpPath();
+        ensureThenEmptyDir(dirPath);
     }
 
     public static String checkNextUseableFileName(String fileName){

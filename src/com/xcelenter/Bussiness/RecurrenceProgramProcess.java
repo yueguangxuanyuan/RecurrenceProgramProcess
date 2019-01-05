@@ -32,7 +32,9 @@ public class RecurrenceProgramProcess {
         CommonAttributes commonAttributes = CommonAttributes.getInstance();
         commonAttributes.setDbFilePath(sourceDir+ File.separator +"\\Dao\\log.db");
         commonAttributes.setFileRootPath(sourceDir);
+        FileUtil.ensureThenEmptyDir(targetDir);
         commonAttributes.setOutPutRootPath(targetDir);
+        FileUtil.ensureThenEmptyDir(tmpDir);
         commonAttributes.setTmpPath(tmpDir);
 
         Connection con = null;
