@@ -1,5 +1,6 @@
 package com.xcelenter.Model;
 
+import com.xcelenter.Util.IOUtil;
 import com.xcelenter.Util.LogUtil;
 
 import java.io.*;
@@ -93,15 +94,7 @@ public class CodeFile {
             } catch (IOException e) {
                 e.printStackTrace();
             }finally {
-                if(fw != null){
-                    try {
-                        fw.flush();
-                        fw.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
+                IOUtil.elegantlyCloseFileWriter(fw);
             }
 
         }
@@ -126,6 +119,5 @@ public class CodeFile {
                 e.printStackTrace();
             }
         }
-
     }
 }

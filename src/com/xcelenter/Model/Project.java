@@ -17,6 +17,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 public class Project {
@@ -63,6 +64,11 @@ public class Project {
 
         try {
             FileUtils.copyFile(new File(filePhysicPath),new File(targetFilePath));
+
+            //判断是否是代码文件然后选择是否添加进项目
+            if(!FileUtil.checkIsCppFile(targetFilePath)){
+                return;
+            }
             CodeFile codeFile = new CodeFile(targetFilePath);
             codeFile.setFilePath(fileRealPath);
             codeFile.setFileName(fileRealPath.substring(fileRealPath.lastIndexOf("\\")+1));
@@ -80,9 +86,11 @@ public class Project {
     public void loadProject(){
 
         String filterFilePath = projectPhysicPath + File.separator + projectName + ".vcxproj.filters";
-
+        File filterFile = new File(filterFilePath);
+        if(!filterFile.exists()){
+            return;
+        }
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-
         try {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(filterFilePath);
@@ -171,5 +179,37 @@ public class Project {
                 codeFile.flushContent();
             }
         }
+    }
+
+    public String getProjectStructure(){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(projectName);
+        stringBuilder.append("---");
+        stringBuilder.append(projectPath);
+        stringBuilder.append("\r\n");
+
+        TreeSet<String> codeFileRelativePathSet = new TreeSet<>();
+        for(String codeFilePath : fileMap.keySet()){
+            StringBuilder fileRecord = new StringBuilder();
+            CodeFile theCodeFile = fileMap.get(codeFilePath);
+            if(theCodeFile == null){
+                fileRecord.append("null");
+            }else{
+                fileRecord.append(theCodeFile.getFilePhysicPath().substring(projectPhysicPath.length()+1));
+            }
+            fileRecord.append("---");
+            fileRecord.append(codeFilePath);
+
+            codeFileRelativePathSet.add(fileRecord.toString());
+        }
+
+        for(String codeFileRecord : codeFileRelativePathSet){
+            stringBuilder.append("\t");
+            stringBuilder.append(codeFileRecord);
+            stringBuilder.append("\r\n");
+        }
+
+        return stringBuilder.toString();
     }
 }

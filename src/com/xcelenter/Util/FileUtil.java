@@ -5,6 +5,8 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class FileUtil {
@@ -76,5 +78,19 @@ public class FileUtil {
         } catch (IOException e) {
             return file.getAbsolutePath();
         }
+    }
+
+    private static List<String> cppFileSuffixList = null;
+    static {
+        cppFileSuffixList = new ArrayList<>();
+        cppFileSuffixList.add("cpp");
+        cppFileSuffixList.add("cxx");
+        cppFileSuffixList.add("cc");
+        cppFileSuffixList.add("h");
+    }
+    public static boolean checkIsCppFile(String filePath){
+        int lastIndexOfDot = filePath.lastIndexOf(".");
+
+        return lastIndexOfDot >= 0 && cppFileSuffixList.contains(filePath.substring(lastIndexOfDot+1));
     }
 }

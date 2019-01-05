@@ -2,6 +2,7 @@ package com.xcelenter.Model;
 
 import com.xcelenter.Common.ConstantAttributes;
 import com.xcelenter.Util.FileUtil;
+import com.xcelenter.Util.IOUtil;
 
 import java.io.*;
 import java.util.HashMap;
@@ -63,6 +64,9 @@ public class Solution {
 
     public void renameProject(String oldName, String newName){
         Project project = projectMap.get(oldName);
+        if(project == null){
+            return;
+        }
         project.setProjectName(newName);
         projectMap.remove(oldName);
         projectMap.put(newName,project);
@@ -116,5 +120,48 @@ public class Solution {
                 project.flushProjectChange();
             }
         }
+
+        //将Solution的文件结构刷新到目标目录
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter(solutionPhysicPath + File.separator + ConstantAttributes.SOLUTION_STRUCTURE_FILENAME,false);
+            String solutionStructure = getSolutionStructure();
+            fileWriter.write(solutionStructure);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            IOUtil.elegantlyCloseFileWriter(fileWriter);
+        }
+    }
+
+    public String getSolutionStructure(){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(solutionName);
+        stringBuilder.append("---");
+        stringBuilder.append(solutionPath);
+        stringBuilder.append("\r\n");
+
+        for(String projectName : projectMap.keySet()){
+            Project project = projectMap.get(projectName);
+
+            if(project == null){
+                stringBuilder.append("\t");
+                stringBuilder.append(project);
+                stringBuilder.append("---");
+                stringBuilder.append("unknown_info");
+                stringBuilder.append("\r\n");
+            }else{
+                String projectStructure = project.getProjectStructure();
+                String[] lineArray = projectStructure.split("\r\n");
+                for(String lineContent : lineArray){
+                    stringBuilder.append("\t");
+                    stringBuilder.append(lineContent);
+                    stringBuilder.append("\r\n");
+                }
+            }
+        }
+
+        return stringBuilder.toString();
     }
 }
