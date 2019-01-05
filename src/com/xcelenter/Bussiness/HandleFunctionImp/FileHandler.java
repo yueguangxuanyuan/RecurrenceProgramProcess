@@ -59,4 +59,87 @@ public class FileHandler {
             DBUtil.elegantlyClose(connection,statement,resultSet);
         }
     }
+
+    public static void fileDelHandler(int id) {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            CommonAttributes commonAttributes = CommonAttributes.getInstance();
+            connection = DBUtil.getDBConnection(commonAttributes.getDbFilePath());
+            statement = connection.createStatement();
+
+            /*
+            检索出solution记录
+             */
+            String sql = "select * from file_event where id = " +id;
+            resultSet = statement.executeQuery(sql);
+
+            if(resultSet == null || !resultSet.next()){
+                throw new Exception(ExceptionInfo.FILE_RECORD_NOT_FOUND);
+            }
+            String fullPath = resultSet.getString("filename");
+            String projectName = resultSet.getString("projectname");
+
+            Solution currentSolution = commonAttributes.getCurrentSolution();
+
+            if(currentSolution == null){
+                throw new Exception(ExceptionInfo.CURRENT_SOLUTION_NOT_EXIST);
+            }
+            Project targetProject = currentSolution.getProject(projectName);
+            if(targetProject == null){
+                throw new Exception(ExceptionInfo.PROJECT_NOT_EXIST);
+            }
+
+            targetProject.removeFile(fullPath);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.elegantlyClose(connection,statement,resultSet);
+        }
+    }
+
+    public static void fileRenameHandler(int id) {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            CommonAttributes commonAttributes = CommonAttributes.getInstance();
+            connection = DBUtil.getDBConnection(commonAttributes.getDbFilePath());
+            statement = connection.createStatement();
+
+            /*
+            检索出solution记录
+             */
+            String sql = "select * from file_event where id = " +id;
+            resultSet = statement.executeQuery(sql);
+
+            if(resultSet == null || !resultSet.next()){
+                throw new Exception(ExceptionInfo.FILE_RECORD_NOT_FOUND);
+            }
+            String fullPath = resultSet.getString("filename");
+            String oldName = resultSet.getString("targetFile");
+            String projectName = resultSet.getString("projectname");
+
+            Solution currentSolution = commonAttributes.getCurrentSolution();
+
+            if(currentSolution == null){
+                throw new Exception(ExceptionInfo.CURRENT_SOLUTION_NOT_EXIST);
+            }
+            Project targetProject = currentSolution.getProject(projectName);
+            if(targetProject == null){
+                throw new Exception(ExceptionInfo.PROJECT_NOT_EXIST);
+            }
+
+            targetProject.renameFile(fullPath,oldName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.elegantlyClose(connection,statement,resultSet);
+        }
+    }
 }

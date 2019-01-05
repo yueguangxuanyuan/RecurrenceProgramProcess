@@ -9,6 +9,7 @@ public class ExceptionInfo {
 
 
     public static final String CURRENT_SOLUTION_NOT_EXIST = "current solution not exist";
+    public static final String PROJECT_NOT_EXIST = "project not exist";
 
     public static final String SOLUTION_NOT_MATCH = "solution not match";
 }

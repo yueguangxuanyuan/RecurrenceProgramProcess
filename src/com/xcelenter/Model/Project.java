@@ -83,6 +83,25 @@ public class Project {
         return fileMap.get(fileRealPath);
     }
 
+    public void removeFile(String fileRealPath){
+        fileMap.remove(fileRealPath);
+    }
+
+    public void renameFile(String newFilePath,String oldName){
+        String pathPrefix = newFilePath.substring(0,newFilePath.lastIndexOf("\\"));
+        String newFileName = newFilePath.substring(newFilePath.lastIndexOf("\\")+1);
+
+        String originFileRealPath = pathPrefix + File.separator + oldName;
+
+        CodeFile theCodeFile = fileMap.get(originFileRealPath);
+        if(theCodeFile != null){
+            theCodeFile.setFileName(newFileName);
+            theCodeFile.setFilePath(newFilePath);
+            fileMap.remove(originFileRealPath);
+            fileMap.put(newFilePath,theCodeFile);
+        }
+    }
+
     public void loadProject(){
 
         String filterFilePath = projectPhysicPath + File.separator + projectName + ".vcxproj.filters";
@@ -198,6 +217,8 @@ public class Project {
             }else{
                 fileRecord.append(theCodeFile.getFilePhysicPath().substring(projectPhysicPath.length()+1));
             }
+            fileRecord.append("---");
+            fileRecord.append(theCodeFile.getFileName());
             fileRecord.append("---");
             fileRecord.append(codeFilePath);
 

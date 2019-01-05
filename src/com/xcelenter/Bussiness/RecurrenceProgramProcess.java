@@ -84,8 +84,12 @@ public class RecurrenceProgramProcess {
         handlerMap.put(ActionEnumClass.solutionRename,SolutionHandler::solutionRenameHandler);
 
         handlerMap.put(ActionEnumClass.solAddProject,SolutionHandler::solAddProjectHandler);
+        handlerMap.put(ActionEnumClass.solDelProject,SolutionHandler::solDelProjectHandler);
+        handlerMap.put(ActionEnumClass.solRenameProject,SolutionHandler::solRenameProjectHandler);
 
         handlerMap.put(ActionEnumClass.fileAddFile, FileHandler::fileAddHandler);
+        handlerMap.put(ActionEnumClass.fileDelFile, FileHandler::fileDelHandler);
+        handlerMap.put(ActionEnumClass.fileRenameFile, FileHandler::fileRenameHandler);
 
         handlerMap.put(ActionEnumClass.contentInsert, ContentHandler::contentChangeHandler);
         handlerMap.put(ActionEnumClass.contentDelete, ContentHandler::contentChangeHandler);
