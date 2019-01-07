@@ -132,6 +132,7 @@ public class SolutionHandler{
             }
             String newSolutionName = resultSet.getString("solutionname");
             String oldName = resultSet.getString("info");
+            oldName = oldName.substring(oldName.lastIndexOf("\\")+1,oldName.lastIndexOf(".sln"));
 
             Solution currentSolution = commonAttributes.getCurrentSolution();
             if(currentSolution == null){
